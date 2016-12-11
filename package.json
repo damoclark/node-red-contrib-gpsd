@@ -1,0 +1,39 @@
+{
+  "name": "node-red-contrib-gpsd",
+  "version": "1.0.0",
+  "description": "A GPSd node for Node-RED",
+  "main": "gpsd/gpsd.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/damoclark/node-red-contrib-gpsd.git"
+  },
+  "keywords": [
+    "node-red",
+		"node-red-contrib",
+    "node",
+		"iot",
+    "gpsd",
+		"adafruit"
+  ],
+  "author": {
+    "name": "Damien Clark",
+    "email": "damo.clarky@gmail.com",
+    "url": "https://damos.world"
+  },
+  "node-red": {
+    "nodes": {
+      "gpsd": "gpsd/gpsd.js"
+    }
+  },
+  "license": "GPL-3.0+",
+  "bugs": {
+    "url": "https://github.com/damoclark/node-red-contrib-gpsd/issues"
+  },
+  "homepage": "https://github.com/damoclark/node-red-contrib-gpsd#readme",
+  "dependencies": {
+    "node-gpsd": "^0.3.0"
+  }
+}

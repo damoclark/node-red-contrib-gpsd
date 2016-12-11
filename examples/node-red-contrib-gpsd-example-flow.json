@@ -1,0 +1,245 @@
+[
+    {
+        "id": "67f4ff1d.729ad8",
+        "type": "tab",
+        "label": "node-red-contrib-gpsd-example-flow"
+    },
+    {
+        "id": "f3f48c5d.b76e5",
+        "type": "debug",
+        "z": "67f4ff1d.729ad8",
+        "name": "",
+        "active": false,
+        "console": "false",
+        "complete": "payload",
+        "x": 542.5,
+        "y": 171.5,
+        "wires": []
+    },
+    {
+        "id": "38b10073.4674",
+        "type": "catch",
+        "z": "67f4ff1d.729ad8",
+        "name": "",
+        "scope": null,
+        "x": 604.5,
+        "y": 67.25,
+        "wires": [
+            [
+                "c94a70c1.72634"
+            ]
+        ]
+    },
+    {
+        "id": "8a3645a3.5aaa3",
+        "type": "debug",
+        "z": "67f4ff1d.729ad8",
+        "name": "",
+        "active": true,
+        "console": "false",
+        "complete": "true",
+        "x": 897.5,
+        "y": 135.5,
+        "wires": []
+    },
+    {
+        "id": "ff349659.7127f8",
+        "type": "file",
+        "z": "67f4ff1d.729ad8",
+        "name": "gpsd_output",
+        "filename": "/home/pi/gpsd.json",
+        "appendNewline": true,
+        "createDir": false,
+        "overwriteFile": "false",
+        "x": 709.5,
+        "y": 293.25,
+        "wires": []
+    },
+    {
+        "id": "2e1212b1.cb86f6",
+        "type": "csv",
+        "z": "67f4ff1d.729ad8",
+        "name": "gpsd-csv",
+        "sep": ",",
+        "hdrin": "",
+        "hdrout": false,
+        "multi": "one",
+        "ret": "\\n",
+        "temp": "class,tag,device,mode,time,ept,lat,lon,alt,epx,epy,epv,track,speed,climb,eps,epc",
+        "x": 698.5,
+        "y": 388.75,
+        "wires": [
+            [
+                "c2f8e0d5.63d078"
+            ]
+        ]
+    },
+    {
+        "id": "c2f8e0d5.63d078",
+        "type": "file",
+        "z": "67f4ff1d.729ad8",
+        "name": "gpsd-csv-file",
+        "filename": "/home/pi/gpsd.csv",
+        "appendNewline": true,
+        "createDir": false,
+        "overwriteFile": "false",
+        "x": 934.5,
+        "y": 388.25,
+        "wires": []
+    },
+    {
+        "id": "c1d76ea2.67c3d",
+        "type": "gpsd",
+        "z": "67f4ff1d.729ad8",
+        "name": "Adafruit Ultimate GPS",
+        "hostname": "localhost",
+        "port": "2947",
+        "tpv": true,
+        "sky": true,
+        "info": false,
+        "device": true,
+        "gst": false,
+        "att": false,
+        "x": 163.5,
+        "y": 292.25,
+        "wires": [
+            [
+                "f3f48c5d.b76e5",
+                "ff349659.7127f8",
+                "2e1212b1.cb86f6"
+            ]
+        ]
+    },
+    {
+        "id": "c94a70c1.72634",
+        "type": "change",
+        "z": "67f4ff1d.729ad8",
+        "name": "IsCatch",
+        "rules": [
+            {
+                "t": "set",
+                "p": "isCatch",
+                "pt": "msg",
+                "to": "true",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 742.5,
+        "y": 126.75,
+        "wires": [
+            [
+                "8a3645a3.5aaa3"
+            ]
+        ]
+    },
+    {
+        "id": "a97018b5.9c91c8",
+        "type": "status",
+        "z": "67f4ff1d.729ad8",
+        "name": "GPS Status",
+        "scope": [
+            "c1d76ea2.67c3d"
+        ],
+        "x": 337.5,
+        "y": 488.25,
+        "wires": [
+            [
+                "e9645f90.35e3",
+                "a4c44223.226da8"
+            ]
+        ]
+    },
+    {
+        "id": "e9645f90.35e3",
+        "type": "debug",
+        "z": "67f4ff1d.729ad8",
+        "name": "",
+        "active": true,
+        "console": "false",
+        "complete": "status",
+        "x": 843.5,
+        "y": 456.5,
+        "wires": []
+    },
+    {
+        "id": "a4c44223.226da8",
+        "type": "switch",
+        "z": "67f4ff1d.729ad8",
+        "name": "GPS Fix Mode",
+        "property": "status.text",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "cont",
+                "v": "no fix",
+                "vt": "str"
+            },
+            {
+                "t": "cont",
+                "v": "2D fix",
+                "vt": "str"
+            },
+            {
+                "t": "cont",
+                "v": "3D fix",
+                "vt": "str"
+            }
+        ],
+        "checkall": "false",
+        "outputs": 3,
+        "x": 582.5,
+        "y": 542.75,
+        "wires": [
+            [
+                "29a14d53.e497aa"
+            ],
+            [
+                "725b522c.fe1b8c"
+            ],
+            [
+                "c8672662.924228"
+            ]
+        ]
+    },
+    {
+        "id": "725b522c.fe1b8c",
+        "type": "debug",
+        "z": "67f4ff1d.729ad8",
+        "name": "2D fix",
+        "active": true,
+        "console": "false",
+        "complete": "true",
+        "x": 859.5,
+        "y": 544.5,
+        "wires": []
+    },
+    {
+        "id": "29a14d53.e497aa",
+        "type": "debug",
+        "z": "67f4ff1d.729ad8",
+        "name": "no fix",
+        "active": true,
+        "console": "false",
+        "complete": "true",
+        "x": 864.5,
+        "y": 498.5,
+        "wires": []
+    },
+    {
+        "id": "c8672662.924228",
+        "type": "debug",
+        "z": "67f4ff1d.729ad8",
+        "name": "3D fix",
+        "active": true,
+        "console": "false",
+        "complete": "true",
+        "x": 853.5,
+        "y": 599.5,
+        "wires": []
+    }
+]

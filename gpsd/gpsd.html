@@ -1,0 +1,170 @@
+<!--
+node-red-contrib-gpsd - Node for Node Red that reads GPS data from the GPSD software
+
+Copyright (C) 2016 Damien Clark (damo.clarky@gmail.com)
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+
+<!-- The node type is registered along with all of its properties   -->
+<script type="text/javascript">
+	RED.nodes.registerType('gpsd',{
+		category: 'input',
+		color: '#D8BFD8',
+		defaults: {
+			name: {value:""},
+			hostname: {
+				value:"localhost",
+				required: true
+			},
+			port: {
+				value:"2947",
+				required: true
+			},
+			tpv: {value: true}, // Get location information only by default
+			sky: {value: false},
+			info: {value: false},
+			device: {value: false},
+			gst: {value: false},
+			att: {value: false}
+	},
+		// Adds jquery accordion to edit html for UI 'on-editprepare'
+		oneditprepare: function() {
+			$(function() {
+				$( "#gpsd-accordion" ).accordion({
+					heightStyle: "content"
+				}) ;
+			});
+		},
+		inputs:0,
+		outputs:1,
+		icon: "gpsd-logo-small.png",
+		label: function() {
+			return this.name || "gpsd" ;
+		}
+	});
+</script>
+
+<!-- data-template-name identifies the node type this is for              -->
+<script type="text/x-red" data-template-name="gpsd">
+	
+	<!-- Provide style for the GPS event type selectable checkboxes -->
+	<style>
+		.gpsd-checkbox-grid li {
+				display: inline-block;
+				width: 33%;
+		}
+	</style>
+
+	<!-- Each of the div.form-row elements creates a field in the edit dialog.-->
+	<!-- Generally, there should be an input for each property of the node.   -->
+	<!-- The for and id attributes identify the corresponding property        -->
+	<!-- (with the 'node-input-' prefix).                                     -->
+	<!-- The available icon classes are defined Font Awesome Icons (FA Icons) -->
+
+	<!-- Use a jquery accordion to group configuration options to be selected -->
+	<!-- Accordian is of the form:
+	<div id="gpsd-accordion">
+		<h3>Heading in the Accordion</h3>
+		<div>
+			Contents of Accordion
+		</div>
+	</div>
+  -->	
+	<div id="gpsd-accordion">
+		<h3>Connection Details</h3>
+		<div>
+			<div class="form-row">
+				<label for="node-input-hostname"><i class="fa fa-globe"></i> Hostname</label>
+				<input type="text" id="node-input-hostname" placeholder="Hostname"></input>
+			</div>
+	
+			<br/>
+	
+			<div class="form-row">
+				<label for="node-input-port">Port</label>
+				<input type="text" id="node-input-port" placeholder="Port"></input>
+			</div>
+		</div>
+
+		<h3>Events</h3>
+		<div>
+			<p>Refer to <u><a target='_blank' href='http://www.catb.org/gpsd/gpsd_json.html'>GPSd Documentation</a></u> about GPS Events.</p>
+			<br/>
+			<div class="form-row">
+				<p><i class="fa fa-filter" aria-hidden="true"></i> Select GPS Events to Emit:</p>
+				<ul class="gpsd-checkbox-grid"> <!-- TODO The CSS here needs fixing so it all aligns -->
+					<li>
+						<input type="checkbox" id="node-input-tpv" value="TPV" placeholder="TPV" />
+						<label for="node-input-tpv">TPV</label>
+					</li>
+					<li>
+						<input type="checkbox" id="node-input-sky" value="SKY" />
+						<label for="node-input-sky">SKY</label>
+					</li>
+					<li>
+						<input type="checkbox" id="node-input-info" value="INFO" />
+						<label for="node-input-info">INFO</label>
+					</li>
+					<li>
+						<input type="checkbox" id="node-input-device" value="DEVICE" />
+						<label for="node-input-device">DEVICE</label>
+					</li>
+					<li>
+						<input type="checkbox" id="node-input-gst" value="GST" />
+						<label for="node-input-gst">GST</label>
+					</li>
+					<li>
+						<input type="checkbox" id="node-input-att" value="ATT" />
+						<label for="node-input-att">ATT</label>
+					</li>
+				</ul>
+				<input type="button" id="gpsd-selectall"
+					class="ui-button ui-widget ui-corner-all ui-button-text-only primary"
+					value="Select All"
+					onclick="$('ul.gpsd-checkbox-grid input').prop('checked',true);"/>
+				<input type="button" id="gpsd-deselectall"
+					class="ui-button ui-widget ui-corner-all ui-button-text-only primary"
+					value="Select None"
+					onclick="$('ul.gpsd-checkbox-grid input').prop('checked',false);"/>
+			</div>
+		</div>
+	</div>
+	<br/>
+	<!-- By convention, most nodes have a 'name' property. The following div -->
+	<!-- provides the necessary field. Should always be the last option      -->
+	<div class="form-row">
+		<label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+		<input type="text" id="node-input-name" placeholder="Name">
+	</div>
+
+	 
+</script>
+
+<!-- UP TO HERE -->
+
+<!-- Next, some simple help text is provided for the node.                   -->
+<script type="text/x-red" data-help-name="gpsd">
+   <!-- data-help-name identifies the node type this help is for             -->
+   <!-- This content appears in the Info sidebar when a node is selected     -->
+   <!-- The first <p> is used as the pop-up tool tip when hovering over a    -->
+   <!-- node in the palette.                                                 -->
+   <p>Input node that talks to a gpsd daemon and retrieves data from a GPS.</p>
+   <p>Outputs an object called <code>msg</code> containing <code>msg.name</code>
+	 and <code>msg.payload</code>. <code>msg.payload</code> is an object with
+	 properties according to the <u><a target='_blank' 
+   href='http://www.catb.org/gpsd/gpsd_json.html'>gpsd documentation</a></u>.</p>
+</script>
+
