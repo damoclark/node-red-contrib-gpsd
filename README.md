@@ -92,7 +92,7 @@ explanation of field names and values, but again for TL;DR
 
 ## TODO
 
-A [TODO List](blob/master/TODO.md) of possible future features is included.  Contributions
+A [TODO List](TODO.md) of possible future features is included.  Contributions
 welcome.
 
 ## Licence
