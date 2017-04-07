@@ -123,8 +123,7 @@ module.exports = function(RED) {
 			if(config[ev] === true) {
 				node.log('Registering "'+ev+'" event') ;
 				listener.on(ev.toUpperCase(), function (data) {
-					node.log('data='+JSON.stringify(data)) ;
-		
+
 					var msg = {} ;
 					msg.payload = data ;
 			
