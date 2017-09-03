@@ -64,7 +64,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<style>
 		.gpsd-checkbox-grid li {
 				display: inline-block;
-				width: 33%;
+				width: 40%;
+		}
+
+		.gpsd-checkbox {
+				display: inline-block !important;
+				width: auto !important;
+				vertical-align: top !important;
+		}
+		
+		.gpsd-checkbox-label {
+				width: 70% !important;
 		}
 	</style>
 
@@ -105,30 +115,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			<br/>
 			<div class="form-row">
 				<p><i class="fa fa-filter" aria-hidden="true"></i> Select GPS Events to Emit:</p>
-				<ul class="gpsd-checkbox-grid"> <!-- TODO The CSS here needs fixing so it all aligns -->
+				<ul class="gpsd-checkbox-grid">
 					<li>
-						<input type="checkbox" id="node-input-tpv" value="TPV" placeholder="TPV" />
-						<label for="node-input-tpv">TPV</label>
+						<input type="checkbox" class="gpsd-checkbox" id="node-input-tpv" value="TPV" />
+						<label class="gpsd-checkbox-label" for="node-input-tpv">TPV</label>
 					</li>
 					<li>
-						<input type="checkbox" id="node-input-sky" value="SKY" />
-						<label for="node-input-sky">SKY</label>
+						<input type="checkbox" class="gpsd-checkbox" id="node-input-sky" value="SKY" />
+						<label class="gpsd-checkbox-label" for="node-input-sky">SKY</label>
 					</li>
 					<li>
-						<input type="checkbox" id="node-input-info" value="INFO" />
-						<label for="node-input-info">INFO</label>
+						<input type="checkbox" class="gpsd-checkbox" id="node-input-info" value="INFO" />
+						<label class="gpsd-checkbox-label" for="node-input-info">INFO</label>
 					</li>
 					<li>
-						<input type="checkbox" id="node-input-device" value="DEVICE" />
-						<label for="node-input-device">DEVICE</label>
+						<input type="checkbox" class="gpsd-checkbox" id="node-input-device" value="DEVICE" />
+						<label class="gpsd-checkbox-label" for="node-input-device">DEVICE</label>
 					</li>
 					<li>
-						<input type="checkbox" id="node-input-gst" value="GST" />
-						<label for="node-input-gst">GST</label>
+						<input type="checkbox" class="gpsd-checkbox" id="node-input-gst" value="GST" />
+						<label class="gpsd-checkbox-label" for="node-input-gst">GST</label>
 					</li>
 					<li>
-						<input type="checkbox" id="node-input-att" value="ATT" />
-						<label for="node-input-att">ATT</label>
+						<input type="checkbox" class="gpsd-checkbox" id="node-input-att" value="ATT" />
+						<label class="gpsd-checkbox-label" for="node-input-att">ATT</label>
 					</li>
 				</ul>
 				<input type="button" id="gpsd-selectall"
