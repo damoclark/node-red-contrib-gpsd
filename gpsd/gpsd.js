@@ -47,15 +47,31 @@ module.exports = function(RED) {
 
 		// Capture the name
 		this.name = config.name ;
+
+		// copy "this" object in case we need it in context of callbacks of other
+		// functions.
+		var node = this ;
+
+		node.infoLogger = function(s) {
+			node.log(s)
+		}
+
+		node.warnLogger = function(s) {
+			node.warn(s)
+		}
+
+		node.errorLogger = function(s) {
+			node.error(s)
+		}
 		
 		// Capture the config for connecting to the listener
-		this.listener = {
+		var settings = {
 			"hostname": config.hostname,
 			"port": config.port,
 			"logger": {
-				"info": this.log,
-				"warn": this.warn,
-				"error": this.error
+				"info": node.infoLogger,
+				"warn": node.warnLogger,
+				"error": node.errorLogger
 			},
 			"parse": true
 		} ;
@@ -78,20 +94,16 @@ module.exports = function(RED) {
 			'att'
 		] ;
 		
-		// copy "this" object in case we need it in context of callbacks of other
-		// functions.
-		var node = this ;
-
 		
 		// Do whatever you need to do in here - declare callbacks etc
 		
-		var listener = new node_gpsd.Listener(this.listener) ;
+		node.listener = new node_gpsd.Listener(settings) ;
 
 		// Register specific listener for TPV events (location) and check the
 		// mode property to see if we have a fix
 		// Then update the status.  This status info can be used for other flows
 		// when the fix state changes
-		listener.on('TPV',function(data) {
+		node.listener.on('TPV',function(data) {
 			
 			// If no change in fix state, then do nothing
 			if(node.fixed === data.mode) {
@@ -122,7 +134,7 @@ module.exports = function(RED) {
 		gpsd_events.forEach(function(ev) {
 			if(config[ev] === true) {
 				node.log('Registering "'+ev+'" event') ;
-				listener.on(ev.toUpperCase(), function (data) {
+				node.listener.on(ev.toUpperCase(), function (data) {
 
 					var msg = {} ;
 					msg.payload = data ;
@@ -135,7 +147,7 @@ module.exports = function(RED) {
 		}) ;
 		
 		// Attempt to auto-reconnect if disconnected from gpsd
-		listener.on('disconnected', function () {
+		node.listener.on('disconnected', function () {
 			
 			// If we are already attempt to reconnect, then ignore this
 			if(node.reconnect !== null) {
@@ -149,7 +161,7 @@ module.exports = function(RED) {
 			// Let's attempt to reconnect to gpsd every 3 seconds (maybe it restarted)
 			node.reconnect = setInterval(function() {
 				node.warn('Attempting to reconnect to gpsd') ;
-				listener.connect(function() {
+				node.listener.connect(function() {
 
 					// Reset our interval timer for reconnecting
 					if(node.reconnect !== null) {
@@ -161,7 +173,7 @@ module.exports = function(RED) {
 						node.warn('Reconnected to gpsd') ;
 						
 						// Lets get back to watching for events again
-						listener.watch() ;
+						node.listener.watch() ;
 					}
 
 				}) ;
@@ -169,24 +181,31 @@ module.exports = function(RED) {
 		}) ;
 	
 		// Connect on initialisation of the node
-		listener.connect(function() {
+		node.listener.connect(function() {
 			//Set UI status to connected
 			node.status({fill:"grey",shape:"ring",text:"No fix"}) ;
 			node.log('Connected to gpsd') ;
 			listener.watch();
 		});
 
-		this.on('close', function(done) {
+		node.on('close', function(done) {
 			// Called when the node is shutdown - eg on redeploy.
 			// Remove all current listeners so events no longer fire
-			listener.removeAllListeners() ;
+			node.listener.removeAllListeners() ;
 			// If we are currently connected, then disconnect from gpsd
-			if(listener.isConnected()) {
-				listener.disconnect(function() {
+			if(node.listener.isConnected()) {
+				node.listener.disconnect(function() {
 					node.log('Disconnecting from gpsd on close of gpsd node') ;
-					listener = null ;
+					node.listener = null ;
 					done() ;
 				}) ;
+			} else {
+				if (node.reconnect) {
+					clearInterval(node.reconnect);
+					node.reconnect = null;
+					node.listener = null;
+				}
+				done();
 			}
 		});
 	}
