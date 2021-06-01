@@ -185,7 +185,7 @@ module.exports = function(RED) {
 			//Set UI status to connected
 			node.status({fill:"grey",shape:"ring",text:"No fix"}) ;
 			node.log('Connected to gpsd') ;
-			listener.watch();
+			node.listener.watch();
 		});
 
 		node.on('close', function(done) {
