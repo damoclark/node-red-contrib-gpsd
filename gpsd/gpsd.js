@@ -98,6 +98,10 @@ module.exports = function(RED) {
 		// Do whatever you need to do in here - declare callbacks etc
 		
 		node.listener = new node_gpsd.Listener(settings) ;
+		
+		node.listener.on('error', function(param) {
+			node.error(param)
+		});
 
 		// Register specific listener for TPV events (location) and check the
 		// mode property to see if we have a fix
