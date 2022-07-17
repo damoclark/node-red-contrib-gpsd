@@ -1,2 +1,3 @@
 node_modules/
-*.komodoproject
+.idea/
+.DS_Store
